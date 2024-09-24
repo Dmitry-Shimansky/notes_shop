@@ -11,3 +11,5 @@ export const test = base.extend<pageObjects>({
         use(loginPage);
     }
 })
+
+export const expect = test.expect;
