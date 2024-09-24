@@ -1,0 +1,19 @@
+{
+  "name": "notes_shop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test ui": "npx playwright test --ui",
+    "test on browser": "npx playwright test --headed",
+    "pretest": "tsc --noEmit && eslint src/**/*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.47.2",
+    "@types/node": "^22.6.1"
+  }
+}
