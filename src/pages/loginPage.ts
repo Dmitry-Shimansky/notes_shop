@@ -8,7 +8,7 @@ export class LoginPage {
     }
 
     getUserName():Locator {
-        return this.page.locator(`${this.baseElement} #loginform-username`);
+        return this.page.locator(`${this.baseElement} input[id="loginform-username"]`);
     }
     getPassword():Locator {
         return this.page.locator(`${this.baseElement} input[id="loginform-password"]`);
@@ -25,8 +25,8 @@ export class LoginPage {
     }
 
     public async login(userName: string, password: string):Promise<void> {
-        await this.getUserName().fill(userName);
-        await this.getPassword().fill(password);
+        await this.getUserName().pressSequentially(userName);
+        await this.getPassword().pressSequentially(password);
         await this.getLoginBtn().click();
     }
 
