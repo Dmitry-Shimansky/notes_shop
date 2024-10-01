@@ -6,13 +6,17 @@ test.describe("Cart", async () => {
         await loginPage.isReady();
         await loginPage.login("test", "test");
         await mainPage.isReady();
+        await mainPage.resetCart();
     });
-    test.afterEach(async ({mainPage}) => {
-        await mainPage.logOut();
-    });
+    // test.afterEach(async ({mainPage}) => {
+    //     await mainPage.logOut();
+    // });
 
-    test.only("Move to empty cart", async ({mainPage}) => {
-        console.log(await mainPage.getOrdersCountValue());
+    test.only("Move to empty cart", async ({mainPage, cartPage}) => {
+        await mainPage.clickCartButton();
+        await expect(mainPage.getCartContainer()).toBeVisible();
+        await mainPage.clickMoveToCartButton();
+        await cartPage.isReady();
     });
 
     test("Move to cart with 1 not promotion product", async () => {});
