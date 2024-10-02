@@ -106,5 +106,11 @@ export class MainPage {
             await this.clickBuyButton(this.getDiscountProduct(productNumber))
             : await this.clickBuyButton(this.getOriginalProduct(productNumber));
     }
-
+    public async addSomeProductsToCart(discount: boolean, productCount: number, productNumber = 1): Promise<void> {
+        for (let i = 0; i < productCount; i++) {
+            discount === true ?
+                await this.clickBuyButton(this.getDiscountProduct(productNumber))
+                : await this.clickBuyButton(this.getOriginalProduct(productNumber));
+        }
+    }
 }

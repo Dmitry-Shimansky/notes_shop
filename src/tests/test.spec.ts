@@ -19,7 +19,7 @@ test.describe("Cart", async () => {
         await cartPage.isReady();
     });
 
-    test.only("Move to cart with 1 not promotion product", async ({mainPage, cartPage}) => {
+    test("Move to cart with 1 not promotion product", async ({mainPage, cartPage}) => {
         await mainPage.addProductToCart(false);
         expect(await mainPage.getOrdersCountValue()).toBe("1");
         await mainPage.clickCartButton();
@@ -43,7 +43,28 @@ test.describe("Cart", async () => {
         await cartPage.isReady();
     });
 
-    test("Move to cart with 9 different products", async () => {});
+    test("Move to cart with 9 different products", async ({mainPage, cartPage}) => {
+        await mainPage.addSomeProductsToCart(true, 4);
+        await mainPage.addSomeProductsToCart(false, 5);
+        expect(await mainPage.getOrdersCountValue()).toBe("9");
+        await mainPage.clickCartButton();
+        await expect(mainPage.getCartContainer(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.getCartProductName(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartProductPrice(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await mainPage.clickMoveToCartButton();
+        await cartPage.isReady();
+    });
 
-    test("Move to cart with 9 promotion products with the same product name", async () => {});
+    test("Move to cart with 9 promotion products with the same product name", async ({mainPage, cartPage}) => {
+        await mainPage.addSomeProductsToCart(false, 9);
+        expect(await mainPage.getOrdersCountValue()).toBe("9");
+        await mainPage.clickCartButton();
+        await expect(mainPage.getCartContainer(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.getCartProductName(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartProductPrice(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await mainPage.clickMoveToCartButton();
+        await cartPage.isReady();
+    });
 });
