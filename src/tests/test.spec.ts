@@ -12,16 +12,36 @@ test.describe("Cart", async () => {
     //     await mainPage.logOut();
     // });
 
-    test.only("Move to empty cart", async ({mainPage, cartPage}) => {
+    test("Move to empty cart", async ({mainPage, cartPage}) => {
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartContainer()).toBeVisible();
+        await expect(mainPage.getCartContainer(),`Basket window is not visible`).toBeVisible();
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
 
-    test("Move to cart with 1 not promotion product", async () => {});
+    test.only("Move to cart with 1 not promotion product", async ({mainPage, cartPage}) => {
+        await mainPage.addProductToCart(false);
+        expect(await mainPage.getOrdersCountValue()).toBe("1");
+        await mainPage.clickCartButton();
+        await expect(mainPage.getCartContainer(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.getCartProductName(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartProductPrice(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await mainPage.clickMoveToCartButton();
+        await cartPage.isReady();
+    });
 
-    test("Move to cart with 1 promotion product", async () => {});
+    test("Move to cart with 1 promotion product", async ({mainPage, cartPage}) => {
+        await mainPage.addProductToCart(true);
+        expect(await mainPage.getOrdersCountValue()).toBe("1");
+        await mainPage.clickCartButton();
+        await expect(mainPage.getCartContainer(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.getCartProductName(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartProductPrice(mainPage.getCartProductsList())).toBeVisible();
+        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await mainPage.clickMoveToCartButton();
+        await cartPage.isReady();
+    });
 
     test("Move to cart with 9 different products", async () => {});
 

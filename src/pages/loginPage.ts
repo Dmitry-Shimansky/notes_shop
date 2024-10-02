@@ -31,6 +31,6 @@ export class LoginPage {
     }
 
     public async isReady()  {
-        return expect(this.getLogInPanel()).toBeVisible();
+        return expect(this.getLogInPanel(), "Login page is not visible").toBeVisible();
     }
 }
