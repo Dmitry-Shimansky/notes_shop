@@ -1,9 +1,11 @@
 import {Page, Locator, expect} from "@playwright/test";
+import {OrderItem} from "../models/order.model";
 
 export class MainPage {
     private readonly baseElement: string;
     private readonly navbar: string;
     private readonly cartPopUp: string;
+    ordersArray: Array<OrderItem> = [];
 
     constructor(public readonly page: Page) {
         this.baseElement = '//body/div[@class="wrap"]';
@@ -56,6 +58,9 @@ export class MainPage {
     getOriginalProduct(index: number):Locator {
         return this.page.locator(`(${this.baseElement}//*[@class="container"]//*[@class="note-list row"]/div//*[@data-product and not(contains(@class,"hasDiscount"))])[${index}]`);
     }
+    getProductInputField(product: Locator):Locator {
+        return product.locator('//input[@name="product-enter-count"]');
+    }
 
     public async clickMoveToCartButton():Promise<void> {
         await this.getMoveToCartButton().click();
@@ -96,21 +101,76 @@ export class MainPage {
                 }
                 return ordersCount;
             };
+            await count();
+        }
+    }
+    public async waitForCounterUpdate(): Promise<void> {
+        let ordersCount = parseInt(await this.getOrdersCountValue());
+        if (ordersCount === 0) {
+            const count = async () => {
+                while(ordersCount > 0) {
+                    await this.cartCountVisible();
+                    ordersCount = parseInt(await this.getOrdersCountValue());
+                }
+                return ordersCount;
+            };
+            await count();
         }
     }
     public async clickBuyButton(product: Locator):Promise<void> {
         await product.locator('//button[text()="Купить"]').click();
     }
     public async addProductToCart(discount: boolean, productNumber = 1):Promise<void> {
-        discount === true ?
-            await this.clickBuyButton(this.getDiscountProduct(productNumber))
+        discount === true
+            ? await this.clickBuyButton(this.getDiscountProduct(productNumber))
             : await this.clickBuyButton(this.getOriginalProduct(productNumber));
     }
     public async addSomeProductsToCart(discount: boolean, productCount: number, productNumber = 1): Promise<void> {
         for (let i = 0; i < productCount; i++) {
-            discount === true ?
-                await this.clickBuyButton(this.getDiscountProduct(productNumber))
-                : await this.clickBuyButton(this.getOriginalProduct(productNumber));
+            await this.addProductToCart(discount, productNumber);
         }
+    }
+    public async getProductNameText(product: Locator): Promise<string> {
+        return product.locator('//*[contains(@class,"product_name")]').innerText();
+    }
+    public async getProductPriceValue(product: Locator): Promise<string> {
+        return product.locator('//span[contains(@class,"product_price") and text()]').innerText();
+    }
+    public async addProductToCartByInputCount(discount: boolean, productCount: number, productNumber = 1):Promise<void> {
+        let title: string;
+        let price: number;
+        let count = productCount;
+        let total: number;
+        let product: Locator;
+
+        discount === true
+            ? product = this.getDiscountProduct(productNumber)
+            : product = this.getOriginalProduct(productNumber);
+
+        await this.getProductInputField(product).fill(productCount.toString());
+        await this.clickBuyButton(product);
+        title = await this.getProductNameText(product);
+        price = parseInt((await this.getProductPriceValue(product)).split(' ')[0]);
+        total = count * price;
+
+        const order: OrderItem = {
+            title,
+            price,
+            count,
+            total
+        }
+        this.ordersArray.push(order);
+    }
+    public async findProductInCart(title: string): Promise<Locator> {
+        return this.getCartProductsList().locator(`//*[text()="${title}"]/parent::node()`);
+    }
+    public async productCartPrice(product: Locator): Promise<number> {
+        return parseInt((await this.getCartProductPrice(product).textContent()).match(/\d+/g)[0]);
+    }
+    public async productCartCount(product: Locator): Promise<number> {
+        return parseInt((await this.getCartProductCount(product).textContent()));
+    }
+    public async getCartProductsTotalValue(): Promise<number> {
+        return parseInt(await this.getCartTotalPrice().textContent());
     }
 }
