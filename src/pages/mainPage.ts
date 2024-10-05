@@ -22,6 +22,9 @@ export class MainPage {
     getCartContainer():Locator {
         return this.page.locator('//*[@id="basketContainer"]');
     }
+    getCartWindow():Locator {
+        return this.page.locator('//*[@id="basketContainer"]/*[contains(@class,"dropdown-menu")]');
+    }
     getCartButton():Locator {
         return this.page.locator('//*[@id="dropdownBasket"]');
     }
@@ -67,6 +70,13 @@ export class MainPage {
     }
     public async clickCartButton():Promise<void> {
         await this.getCartButton().click();
+        let elem = await this.getCartWindow().evaluate(el=>el.classList.contains('show'));
+        if (elem != true) {
+            do {
+                await this.getCartButton().click();
+                elem = await this.getCartWindow().evaluate(el=>el.classList.contains('show'));
+            } while (elem === true);
+        }
     }
     public async clickClearCart():Promise<void> {
         await this.getClearCartButton().click();
@@ -102,6 +112,7 @@ export class MainPage {
                 return ordersCount;
             };
             await count();
+            await expect(this.getCartWindow()).toBeVisible({timeout: 10000, visible: false});
         }
     }
     public async waitForCounterUpdate(): Promise<void> {
@@ -164,8 +175,17 @@ export class MainPage {
     public async findProductInCart(title: string): Promise<Locator> {
         return this.getCartProductsList().locator(`//*[text()="${title}"]/parent::node()`);
     }
+    public async productCartNameElement(product: Locator): Promise<Locator> {
+        return this.getCartProductName(product);
+    }
+    public async productCartPriceElement(product: Locator): Promise<Locator> {
+        return this.getCartProductPrice(product);
+    }
     public async productCartPrice(product: Locator): Promise<number> {
         return parseInt((await this.getCartProductPrice(product).textContent()).match(/\d+/g)[0]);
+    }
+    public async productCartCountElement(product: Locator): Promise<Locator> {
+        return this.getCartProductCount(product);
     }
     public async productCartCount(product: Locator): Promise<number> {
         return parseInt((await this.getCartProductCount(product).textContent()));
