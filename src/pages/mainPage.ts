@@ -3,14 +3,10 @@ import {OrderItem} from "../models/order.model";
 
 export class MainPage {
     private readonly baseElement: string;
-    private readonly navbar: string;
-    private readonly cartPopUp: string;
     ordersArray: Array<OrderItem> = [];
 
     constructor(public readonly page: Page) {
         this.baseElement = '//body/div[@class="wrap"]';
-        this.navbar = `${this.baseElement} nav[class*="navbar"] > [class*="container"]`;
-        this.cartPopUp = `//*[@id="basketContainer"]//*[contains(@class,"dropdown-menu")]`;
     }
 
     userAccountElement():Locator {
@@ -22,36 +18,16 @@ export class MainPage {
     cartContainerElement():Locator {
         return this.page.locator('//*[@id="basketContainer"]');
     }
-    cartWindowElement():Locator {
-        return this.page.locator('//*[@id="basketContainer"]/*[contains(@class,"dropdown-menu")]');
-    }
+    // cartWindowElement():Locator {
+    //     return this.page.locator('//*[@id="basketContainer"]/*[contains(@class,"dropdown-menu")]');
+    // }
     cartButtonElement():Locator {
         return this.page.locator('//*[@id="dropdownBasket"]');
     }
     ordersCountElement():Locator {
         return this.cartContainerElement().locator('//span[contains(@class,"basket-count-items")]');
     }
-    clearCartBtnElem():Locator {
-        return this.page.locator(`${this.cartPopUp}//a[@role="button" and text()="Очистить корзину"]`);
-    }
-    moveToCartBtnElem():Locator {
-        return this.page.locator(`${this.cartPopUp}//a[@role="button" and text()="Перейти в корзину"]`);
-    }
-    cartProductsListElems():Locator {
-        return this.page.locator(`${this.cartPopUp}/ul//li`);
-    }
-    cartProductNameElem(cartProductItem: Locator):Locator {
-        return cartProductItem.locator('//span[@class="basket-item-title"]');
-    }
-    cartProductPriceElem(cartProductItem: Locator):Locator {
-        return cartProductItem.locator('//span[@class="basket-item-price"]');
-    }
-    cartProductCountElem(cartProductItem: Locator):Locator {
-        return cartProductItem.locator('//span[contains(@class,"basket-item-count")]');
-    }
-    cartTotalPriceElem():Locator {
-        return this.page.locator(`${this.cartPopUp}//span[@class="basket_price"]`);
-    }
+
     productListElems():Locator {
         return this.page.locator(`${this.baseElement}//*[@class="container"]//*[@class="note-list row"]/div`);
     }
@@ -65,23 +41,6 @@ export class MainPage {
         return product.locator('//input[@name="product-enter-count"]');
     }
 
-    public async clickMoveToCartButton():Promise<void> {
-        await this.moveToCartBtnElem().click();
-    }
-    public async clickCartButton():Promise<void> {
-        await this.cartButtonElement().click();
-        let elem = await this.cartWindowElement().evaluate(el=>el.classList.contains('show'));
-        if (elem != true) {
-            do {
-                await this.cartButtonElement().click();
-                await this.page.waitForTimeout(1000);
-                elem = await this.cartWindowElement().evaluate(el=>el.classList.contains('show'));
-            } while (elem === false);
-        }
-    }
-    public async clickClearCart():Promise<void> {
-        await this.clearCartBtnElem().click();
-    }
     public async logOut():Promise<void> {
         await this.userAccountElement().click();
         await this.exitButtonElement().click();
@@ -96,40 +55,6 @@ export class MainPage {
     }
     public async cartCountVisible(): Promise<void> {
         return expect(this.ordersCountElement(), "Basket order counter is not visible").toBeVisible({timeout: 10000});
-    }
-    public async clearButtonVisible(): Promise<void> {
-        return expect(this.clearCartBtnElem(), "Basket clear button is not visible").toBeVisible();
-    }
-    public async resetCart(): Promise<void> {
-        let ordersCount = parseInt(await this.getOrdersCountValue());
-        if (ordersCount > 0 && ordersCount !== 9) {
-            await this.clickCartButton();
-            await this.clearButtonVisible();
-            await this.clickClearCart();
-            const count = async () => {
-                while(ordersCount != 0) {
-                    ordersCount = parseInt(await this.getOrdersCountValue());
-                }
-                return ordersCount;
-            };
-            await count();
-            await this.cartCountVisible();
-            await expect(this.cartWindowElement()).toBeVisible({timeout: 10000, visible: false});
-        } else if (ordersCount === 9) {
-            await this.addProductToCartByInputCount(false, 1);
-            await this.clickCartButton();
-            await this.clearButtonVisible();
-            await this.clickClearCart();
-            const count = async () => {
-                while(ordersCount != 0) {
-                    ordersCount = parseInt(await this.getOrdersCountValue());
-                }
-                return ordersCount;
-            };
-            await count();
-            await this.cartCountVisible();
-            await expect(this.cartWindowElement()).toBeVisible({timeout: 10000, visible: false});
-        }
     }
     public async waitForCounterUpdate(): Promise<void> {
         let ordersCount = parseInt(await this.getOrdersCountValue());
@@ -187,26 +112,5 @@ export class MainPage {
             total
         }
         this.ordersArray.push(order);
-    }
-    public async findProductInCart(title: string): Promise<Locator> {
-        return this.cartProductsListElems().locator(`//*[text()="${title}"]/parent::node()`);
-    }
-    public async productCartNameElement(product: Locator): Promise<Locator> {
-        return this.cartProductNameElem(product);
-    }
-    public async productCartPriceElement(product: Locator): Promise<Locator> {
-        return this.cartProductPriceElem(product);
-    }
-    public async productCartPrice(product: Locator): Promise<number> {
-        return parseInt((await this.cartProductPriceElem(product).textContent()).match(/\d+/g)[0]);
-    }
-    public async productCartCountElement(product: Locator): Promise<Locator> {
-        return this.cartProductCountElem(product);
-    }
-    public async productCartCount(product: Locator): Promise<number> {
-        return parseInt((await this.cartProductCountElem(product).textContent()));
-    }
-    public async getCartProductsTotalValue(): Promise<number> {
-        return parseInt(await this.cartTotalPriceElem().textContent());
     }
 }
