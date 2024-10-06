@@ -3,7 +3,7 @@ import {OrderItem} from "../models/order.model";
 
 export class MainPage {
     private readonly baseElement: string;
-    public ordersArray: Array<OrderItem> = [];
+    ordersArray: Array<OrderItem> = [];
 
     constructor(public readonly page: Page) {
         this.baseElement = '//body/div[@class="wrap"]';
