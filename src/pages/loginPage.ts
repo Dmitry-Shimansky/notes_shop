@@ -1,4 +1,4 @@
-import {Page, Locator, expect} from "@playwright/test";
+import {Page, Locator, expect, Browser} from "@playwright/test";
 
 export class LoginPage {
     private readonly baseElement: string;

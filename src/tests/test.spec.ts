@@ -3,13 +3,7 @@ import {test, expect} from "../pages/pageObjectManager/pageObjectManager";
 let orderTotalPrice: number;
 
 test.describe("Cart", async () => {
-    // test.beforeAll(async ({loginPage, mainPage}) => {
-    //     await loginPage.goToLoginPage();
-    //     await loginPage.isReady();
-    //     await loginPage.login("test", "test");
-    //     await mainPage.isReady();
-    // })
-    test.beforeEach(async ({loginPage, mainPage}) => {
+    test.beforeEach("Precondition",async ({loginPage, mainPage}) => {
         await loginPage.goToLoginPage();
         await loginPage.isReady();
         await loginPage.login("test", "test");
@@ -17,13 +11,13 @@ test.describe("Cart", async () => {
         await mainPage.resetCart();
         await mainPage.isReady();
     });
-    // test.afterEach(async ({mainPage}) => {
-    //     await mainPage.logOut();
-    // });
+    test.afterEach(async ({mainPage}) => {
+        await mainPage.logOut();
+    });
 
     test("Move to empty cart", async ({mainPage, cartPage}) => {
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartWindow(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.cartWindowElement(),`Basket window is not visible`).toBeVisible();
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
@@ -33,7 +27,7 @@ test.describe("Cart", async () => {
         await mainPage.addProductToCartByInputCount(false, 1);
         await mainPage.waitForCounterUpdate();
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartWindow(),`Basket window is not visible`).toBeVisible({timeout: 15000});
+        await expect(mainPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
         for (const order of mainPage.ordersArray) {
             const productCartElement = await mainPage.findProductInCart(order.title);
             const productCartNameElement = await mainPage.productCartNameElement(productCartElement);
@@ -52,7 +46,7 @@ test.describe("Cart", async () => {
             ).toEqual(order.count);
             orderTotalPrice += order.total
         }
-        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await expect(mainPage.cartTotalPriceElem()).toBeVisible();
         expect(await mainPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
@@ -63,7 +57,7 @@ test.describe("Cart", async () => {
         await mainPage.addProductToCartByInputCount(true, 1);
         await mainPage.waitForCounterUpdate();
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartWindow(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
         for (const order of mainPage.ordersArray) {
             const productCartElement = await mainPage.findProductInCart(order.title);
             const productCartNameElement = await mainPage.productCartNameElement(productCartElement);
@@ -82,7 +76,7 @@ test.describe("Cart", async () => {
             ).toEqual(order.count);
             orderTotalPrice += order.total
         }
-        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await expect(mainPage.cartTotalPriceElem()).toBeVisible();
         expect(await mainPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
@@ -101,7 +95,7 @@ test.describe("Cart", async () => {
         }
         await mainPage.waitForCounterUpdate();
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartWindow(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout:10000});
         for (const order of mainPage.ordersArray) {
             const productCartElement = await mainPage.findProductInCart(order.title);
             const productCartNameElement = await mainPage.productCartNameElement(productCartElement);
@@ -120,7 +114,7 @@ test.describe("Cart", async () => {
             ).toEqual(order.count);
             orderTotalPrice += order.total
         }
-        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await expect(mainPage.cartTotalPriceElem()).toBeVisible();
         expect(await mainPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
@@ -131,7 +125,7 @@ test.describe("Cart", async () => {
         await mainPage.addProductToCartByInputCount(false, 9);
         await mainPage.waitForCounterUpdate();
         await mainPage.clickCartButton();
-        await expect(mainPage.getCartWindow(),`Basket window is not visible`).toBeVisible();
+        await expect(mainPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout:10000});
         for (const order of mainPage.ordersArray) {
             const productCartElement = await mainPage.findProductInCart(order.title);
             const productCartNameElement = await mainPage.productCartNameElement(productCartElement);
@@ -150,7 +144,7 @@ test.describe("Cart", async () => {
             ).toEqual(order.count);
             orderTotalPrice += order.total
         }
-        await expect(mainPage.getCartTotalPrice()).toBeVisible();
+        await expect(mainPage.cartTotalPriceElem()).toBeVisible();
         expect(await mainPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
         await mainPage.clickMoveToCartButton();
         await cartPage.isReady();
