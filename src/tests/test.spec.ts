@@ -11,7 +11,7 @@ test.describe("Cart", async () => {
         await cartPopUpPage.resetCart();
         await mainPage.isReady();
     });
-    test.afterEach(async ({mainPage}) => {
+    test.afterEach("Log out after test",async ({mainPage}) => {
         await mainPage.logOut();
     });
 
