@@ -1,5 +1,6 @@
 import {Page, Locator, expect} from "@playwright/test";
 import {MainPage} from "./mainPage";
+import {OrderItem} from "../models/order.model";
 
 export class CartPopUpPage extends MainPage {
     private readonly cartPopUp: string;
@@ -105,5 +106,28 @@ export class CartPopUpPage extends MainPage {
             await this.cartCountVisible();
             await expect(this.cartWindowElement()).toBeVisible({timeout: 10000, visible: false});
         }
+    }
+    public async verifyProductsInCartWithOrdered(cartOrdersArray:OrderItem[], totalPrice:number): Promise<void> {
+        let orderTotalPrice = totalPrice;
+        for (const order of cartOrdersArray) {
+            const productCartElement = await this.findProductInCart(order.title);
+            const productCartNameElement = await this.productCartNameElement(productCartElement);
+            const productCartPriceElement = await this.productCartPriceElement(productCartElement);
+            const productCartCountElement = await this.productCartCountElement(productCartElement);
+            const productCartPriceValue = await this.productCartPrice(productCartElement);
+            const productCartCountValue = await this.productCartCount(productCartElement);
+            await expect(productCartNameElement).toBeVisible();
+            await expect(productCartPriceElement).toBeVisible();
+            await expect(productCartCountElement).toBeVisible();
+            expect(productCartPriceValue,
+                `Total price for "${order.title}" in cart (${productCartPriceValue}) doesn't match with ordered total price (${order.total})`
+            ).toEqual(order.total);
+            expect(productCartCountValue,
+                `Count in cart for "${order.title}" (${productCartCountValue}) doesn't match with ordered count (${order.count})`
+            ).toEqual(order.count);
+            orderTotalPrice += order.total
+        }
+        await expect(this.cartTotalPriceElem()).toBeVisible();
+        expect(await this.getCartProductsTotalValue()).toEqual(orderTotalPrice);
     }
 }

@@ -28,26 +28,7 @@ test.describe("Cart", async () => {
         await mainPage.waitForCounterUpdate();
         await cartPopUpPage.clickCartButton();
         await expect(cartPopUpPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
-        for (const order of mainPage.ordersArray) {
-            const productCartElement = await cartPopUpPage.findProductInCart(order.title);
-            const productCartNameElement = await cartPopUpPage.productCartNameElement(productCartElement);
-            const productCartPriceElement = await cartPopUpPage.productCartPriceElement(productCartElement);
-            const productCartCountElement = await cartPopUpPage.productCartCountElement(productCartElement);
-            const productCartPriceValue = await cartPopUpPage.productCartPrice(productCartElement);
-            const productCartCountValue = await cartPopUpPage.productCartCount(productCartElement);
-            await expect(productCartNameElement).toBeVisible();
-            await expect(productCartPriceElement).toBeVisible();
-            await expect(productCartCountElement).toBeVisible();
-            expect(productCartPriceValue,
-                `Total price for "${order.title}" in cart (${productCartPriceValue}) doesn't match with ordered total price (${order.total})`
-            ).toEqual(order.total);
-            expect(productCartCountValue,
-                `Count in cart for "${order.title}" (${productCartCountValue}) doesn't match with ordered count (${order.count})`
-            ).toEqual(order.count);
-            orderTotalPrice += order.total
-        }
-        await expect(cartPopUpPage.cartTotalPriceElem()).toBeVisible();
-        expect(await cartPopUpPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
+        await cartPopUpPage.verifyProductsInCartWithOrdered(mainPage.ordersArray, orderTotalPrice);
         await cartPopUpPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
@@ -58,26 +39,7 @@ test.describe("Cart", async () => {
         await mainPage.waitForCounterUpdate();
         await cartPopUpPage.clickCartButton();
         await expect(cartPopUpPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
-        for (const order of mainPage.ordersArray) {
-            const productCartElement = await cartPopUpPage.findProductInCart(order.title);
-            const productCartNameElement = await cartPopUpPage.productCartNameElement(productCartElement);
-            const productCartPriceElement = await cartPopUpPage.productCartPriceElement(productCartElement);
-            const productCartCountElement = await cartPopUpPage.productCartCountElement(productCartElement);
-            const productCartPriceValue = await cartPopUpPage.productCartPrice(productCartElement);
-            const productCartCountValue = await cartPopUpPage.productCartCount(productCartElement);
-            await expect(productCartNameElement).toBeVisible();
-            await expect(productCartPriceElement).toBeVisible();
-            await expect(productCartCountElement).toBeVisible();
-            expect(productCartPriceValue,
-                `Total price for "${order.title}" in cart (${productCartPriceValue}) doesn't match with ordered total price (${order.total})`
-            ).toEqual(order.total);
-            expect(productCartCountValue,
-                `Count in cart for "${order.title}" (${productCartCountValue}) doesn't match with ordered count (${order.count})`
-            ).toEqual(order.count);
-            orderTotalPrice += order.total
-        }
-        await expect(cartPopUpPage.cartTotalPriceElem()).toBeVisible();
-        expect(await cartPopUpPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
+        await cartPopUpPage.verifyProductsInCartWithOrdered(mainPage.ordersArray, orderTotalPrice);
         await cartPopUpPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
@@ -96,26 +58,7 @@ test.describe("Cart", async () => {
         await mainPage.waitForCounterUpdate();
         await cartPopUpPage.clickCartButton();
         await expect(cartPopUpPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
-        for (const order of mainPage.ordersArray) {
-            const productCartElement = await cartPopUpPage.findProductInCart(order.title);
-            const productCartNameElement = await cartPopUpPage.productCartNameElement(productCartElement);
-            const productCartPriceElement = await cartPopUpPage.productCartPriceElement(productCartElement);
-            const productCartCountElement = await cartPopUpPage.productCartCountElement(productCartElement);
-            const productCartPriceValue = await cartPopUpPage.productCartPrice(productCartElement);
-            const productCartCountValue = await cartPopUpPage.productCartCount(productCartElement);
-            await expect(productCartNameElement).toBeVisible();
-            await expect(productCartPriceElement).toBeVisible();
-            await expect(productCartCountElement).toBeVisible();
-            expect(productCartPriceValue,
-                `Total price for "${order.title}" in cart (${productCartPriceValue}) doesn't match with ordered total price (${order.total})`
-            ).toEqual(order.total);
-            expect(productCartCountValue,
-                `Count in cart for "${order.title}" (${productCartCountValue}) doesn't match with ordered count (${order.count})`
-            ).toEqual(order.count);
-            orderTotalPrice += order.total
-        }
-        await expect(cartPopUpPage.cartTotalPriceElem()).toBeVisible();
-        expect(await cartPopUpPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
+        await cartPopUpPage.verifyProductsInCartWithOrdered(mainPage.ordersArray, orderTotalPrice);
         await cartPopUpPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
@@ -126,26 +69,7 @@ test.describe("Cart", async () => {
         await mainPage.waitForCounterUpdate();
         await cartPopUpPage.clickCartButton();
         await expect(cartPopUpPage.cartWindowElement(),`Basket window is not visible`).toBeVisible({timeout: 10000});
-        for (const order of mainPage.ordersArray) {
-            const productCartElement = await cartPopUpPage.findProductInCart(order.title);
-            const productCartNameElement = await cartPopUpPage.productCartNameElement(productCartElement);
-            const productCartPriceElement = await cartPopUpPage.productCartPriceElement(productCartElement);
-            const productCartCountElement = await cartPopUpPage.productCartCountElement(productCartElement);
-            const productCartPriceValue = await cartPopUpPage.productCartPrice(productCartElement);
-            const productCartCountValue = await cartPopUpPage.productCartCount(productCartElement);
-            await expect(productCartNameElement).toBeVisible();
-            await expect(productCartPriceElement).toBeVisible();
-            await expect(productCartCountElement).toBeVisible();
-            expect(productCartPriceValue,
-                `Total price for "${order.title}" in cart (${productCartPriceValue}) doesn't match with ordered total price (${order.total})`
-            ).toEqual(order.total);
-            expect(productCartCountValue,
-                `Count in cart for "${order.title}" (${productCartCountValue}) doesn't match with ordered count (${order.count})`
-            ).toEqual(order.count);
-            orderTotalPrice += order.total
-        }
-        await expect(cartPopUpPage.cartTotalPriceElem()).toBeVisible();
-        expect(await cartPopUpPage.getCartProductsTotalValue()).toEqual(orderTotalPrice);
+        await cartPopUpPage.verifyProductsInCartWithOrdered(mainPage.ordersArray, orderTotalPrice);
         await cartPopUpPage.clickMoveToCartButton();
         await cartPage.isReady();
     });
