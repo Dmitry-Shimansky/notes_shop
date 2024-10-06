@@ -95,7 +95,7 @@ export class MainPage {
         return expect(this.page.locator(`${this.baseElement}`), 'Basket page is not visible').toBeVisible();
     }
     public async cartCountVisible(): Promise<void> {
-        return expect(this.ordersCountElement(), "Basket order counter is not visible").toBeVisible({timeout: 15000});
+        return expect(this.ordersCountElement(), "Basket order counter is not visible").toBeVisible({timeout: 10000});
     }
     public async clearButtonVisible(): Promise<void> {
         return expect(this.clearCartBtnElem(), "Basket clear button is not visible").toBeVisible();
@@ -136,12 +136,12 @@ export class MainPage {
         if (ordersCount === 0) {
             const count = async () => {
                 while(ordersCount > 0) {
-                    await this.cartCountVisible();
                     ordersCount = parseInt(await this.getOrdersCountValue());
                 }
                 return ordersCount;
             };
             await count();
+            await this.cartCountVisible();
         }
     }
     public async clickBuyButton(product: Locator):Promise<void> {
