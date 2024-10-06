@@ -18,9 +18,6 @@ export class MainPage {
     cartContainerElement():Locator {
         return this.page.locator('//*[@id="basketContainer"]');
     }
-    // cartWindowElement():Locator {
-    //     return this.page.locator('//*[@id="basketContainer"]/*[contains(@class,"dropdown-menu")]');
-    // }
     cartButtonElement():Locator {
         return this.page.locator('//*[@id="dropdownBasket"]');
     }
